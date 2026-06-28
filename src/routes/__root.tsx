@@ -77,9 +77,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "IZUM.STUDY — Learn to code" },
+      { title: "BAKDOR — Learn to code" },
       { name: "description", content: "Learn to build websites of any complexity on Taptop — from zero to pro." },
-      { property: "og:title", content: "IZUM.STUDY — Learn to code" },
+      { property: "og:title", content: "BAKDOR — Learn to code" },
       { property: "og:description", content: "Learn to build websites of any complexity on Taptop — from zero to pro." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
