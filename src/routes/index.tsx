@@ -137,10 +137,13 @@ const reasons = [
 
 function Program() {
   return (
-    <section id="program" className="relative w-full bg-background text-foreground">
+    <section
+      id="program"
+      className="relative w-full bg-foreground text-primary-foreground rounded-3xl overflow-hidden shadow-2xl"
+    >
       {/* Top split: title + [JOIN US] */}
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
-        <div className="border-border px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
             Why do we
             <br />
@@ -148,7 +151,7 @@ function Program() {
           </h2>
         </div>
         <div className="relative px-6 py-20 sm:px-10 md:py-28 lg:px-16">
-          <span className="font-mono text-[13px] uppercase tracking-[0.22em] text-foreground/85">
+          <span className="font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/75">
             [ join us ]
           </span>
           <span className="absolute right-6 top-24 inline-block h-1.5 w-1.5 rounded-full bg-ember sm:right-10 lg:right-16" />
@@ -156,9 +159,9 @@ function Program() {
       </div>
 
       {/* Bottom split: caption + 3 reasons */}
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
-        <div className="border-border px-6 py-16 sm:px-10 md:border-r md:py-24 lg:px-16">
-          <p className="font-mono text-[13px] uppercase tracking-[0.22em] text-foreground/85">
+      <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-2">
+        <div className="border-primary-foreground/10 px-6 py-16 sm:px-10 md:border-r md:py-24 lg:px-16">
+          <p className="font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/75">
             / Keeping up with
             <br />
             the times
@@ -182,8 +185,8 @@ function Program() {
             <div
               key={r.num}
               className={`px-6 py-12 sm:px-10 sm:py-16 lg:px-12 ${
-                i === 0 ? "border-border sm:border-r" : ""
-              } ${i > 0 ? "border-t border-border sm:border-t-0" : ""} ${
+                i === 0 ? "border-primary-foreground/10 sm:border-r" : ""
+              } ${i > 0 ? "border-t border-primary-foreground/10 sm:border-t-0" : ""} ${
                 i === 2 ? "sm:col-span-2 sm:border-t" : ""
               }`}
             >
@@ -191,7 +194,7 @@ function Program() {
               <h3 className="text-display mt-8 text-[clamp(1.4rem,2.2vw,1.9rem)] leading-tight">
                 {r.title}
               </h3>
-              <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-foreground/80">
+              <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-primary-foreground/70">
                 {r.body}
               </p>
             </div>
@@ -201,6 +204,7 @@ function Program() {
     </section>
   );
 }
+
 
 const tiers = [
   { name: "BASIC", price: "$0", features: ["Intro lessons", "Community access", "Self-paced"] },
