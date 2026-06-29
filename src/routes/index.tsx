@@ -312,11 +312,16 @@ function Contacts() {
 function Index() {
   return (
     <main className="relative w-full text-foreground">
+      {/* Static ember background that the white blocks scroll over */}
+      <div aria-hidden className="fixed inset-0 -z-10 bg-ember-scene" />
       <Nav />
       <Hero />
-      <Program />
-      <Price />
+      <div className="px-3 sm:px-5 lg:px-6 space-y-4 sm:space-y-6">
+        <Program />
+        <Price />
+      </div>
       <Contacts />
     </main>
   );
 }
+
