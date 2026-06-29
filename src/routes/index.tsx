@@ -59,7 +59,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative min-h-screen w-full overflow-hidden bg-ember-scene">
+    <section id="top" className="relative min-h-screen w-full overflow-hidden">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-overlay"
         style={{
@@ -137,10 +137,13 @@ const reasons = [
 
 function Program() {
   return (
-    <section id="program" className="relative w-full bg-background text-foreground">
+    <section
+      id="program"
+      className="relative w-full bg-foreground text-primary-foreground rounded-3xl overflow-hidden shadow-2xl"
+    >
       {/* Top split: title + [JOIN US] */}
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
-        <div className="border-border px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
             Why do we
             <br />
@@ -148,7 +151,7 @@ function Program() {
           </h2>
         </div>
         <div className="relative px-6 py-20 sm:px-10 md:py-28 lg:px-16">
-          <span className="font-mono text-[13px] uppercase tracking-[0.22em] text-foreground/85">
+          <span className="font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/75">
             [ join us ]
           </span>
           <span className="absolute right-6 top-24 inline-block h-1.5 w-1.5 rounded-full bg-ember sm:right-10 lg:right-16" />
@@ -156,9 +159,9 @@ function Program() {
       </div>
 
       {/* Bottom split: caption + 3 reasons */}
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
-        <div className="border-border px-6 py-16 sm:px-10 md:border-r md:py-24 lg:px-16">
-          <p className="font-mono text-[13px] uppercase tracking-[0.22em] text-foreground/85">
+      <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-2">
+        <div className="border-primary-foreground/10 px-6 py-16 sm:px-10 md:border-r md:py-24 lg:px-16">
+          <p className="font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/75">
             / Keeping up with
             <br />
             the times
@@ -182,8 +185,8 @@ function Program() {
             <div
               key={r.num}
               className={`px-6 py-12 sm:px-10 sm:py-16 lg:px-12 ${
-                i === 0 ? "border-border sm:border-r" : ""
-              } ${i > 0 ? "border-t border-border sm:border-t-0" : ""} ${
+                i === 0 ? "border-primary-foreground/10 sm:border-r" : ""
+              } ${i > 0 ? "border-t border-primary-foreground/10 sm:border-t-0" : ""} ${
                 i === 2 ? "sm:col-span-2 sm:border-t" : ""
               }`}
             >
@@ -191,7 +194,7 @@ function Program() {
               <h3 className="text-display mt-8 text-[clamp(1.4rem,2.2vw,1.9rem)] leading-tight">
                 {r.title}
               </h3>
-              <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-foreground/80">
+              <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-primary-foreground/70">
                 {r.body}
               </p>
             </div>
@@ -202,6 +205,7 @@ function Program() {
   );
 }
 
+
 const tiers = [
   { name: "BASIC", price: "$0", features: ["Intro lessons", "Community access", "Self-paced"] },
   { name: "PRO", price: "$149", features: ["Full curriculum", "Live workshops", "Project reviews"] },
@@ -210,9 +214,12 @@ const tiers = [
 
 function Price() {
   return (
-    <section id="price" className="relative w-full bg-background text-foreground">
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
-        <div className="border-border px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
+    <section
+      id="price"
+      className="relative w-full bg-foreground text-primary-foreground rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
             Pick
             <br />
@@ -220,24 +227,24 @@ function Price() {
           </h2>
         </div>
         <div className="px-6 py-20 sm:px-10 md:py-28 lg:px-16">
-          <p className="max-w-md font-mono text-[13px] uppercase leading-relaxed tracking-[0.18em] text-foreground/85">
+          <p className="max-w-md font-mono text-[13px] uppercase leading-relaxed tracking-[0.18em] text-primary-foreground/75">
             / Three ways in. Start free, level up when the work demands it. Cancel any time.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-3">
+      <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-3">
         {tiers.map((t, i) => (
           <div
             key={t.name}
-            className={`px-6 py-16 sm:px-10 lg:px-12 ${i < tiers.length - 1 ? "border-b border-border md:border-b-0 md:border-r" : ""}`}
+            className={`px-6 py-16 sm:px-10 lg:px-12 ${i < tiers.length - 1 ? "border-b border-primary-foreground/10 md:border-b-0 md:border-r" : ""}`}
           >
             <p className="font-mono text-[13px] tracking-[0.22em] text-ember">0{i + 1}.</p>
             <h3 className="text-display mt-8 text-[clamp(2rem,3.5vw,2.75rem)]">{t.name}</h3>
-            <p className="text-display mt-2 text-[clamp(2.25rem,4vw,3rem)] text-foreground">
+            <p className="text-display mt-2 text-[clamp(2.25rem,4vw,3rem)]">
               {t.price}
             </p>
-            <ul className="mt-8 space-y-3 font-mono text-[12.5px] uppercase tracking-[0.14em] text-foreground/80">
+            <ul className="mt-8 space-y-3 font-mono text-[12.5px] uppercase tracking-[0.14em] text-primary-foreground/75">
               {t.features.map((f) => (
                 <li key={f} className="flex items-center gap-3">
                   <span className="inline-block h-1.5 w-1.5 rounded-full bg-ember" />
@@ -245,7 +252,7 @@ function Price() {
                 </li>
               ))}
             </ul>
-            <button className="group mt-10 inline-flex items-center gap-3 rounded-lg bg-foreground px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-primary-foreground transition-transform hover:-translate-y-0.5">
+            <button className="group mt-10 inline-flex items-center gap-3 rounded-lg bg-background px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-foreground transition-transform hover:-translate-y-0.5">
               ENROLL
               <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
@@ -256,10 +263,11 @@ function Price() {
   );
 }
 
+
 function Contacts() {
   return (
     <section id="contacts" className="relative w-full overflow-hidden">
-      <div className="bg-ember-scene">
+      <div>
         <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
           <div className="border-border px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
             <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
@@ -312,11 +320,16 @@ function Contacts() {
 function Index() {
   return (
     <main className="relative w-full text-foreground">
+      {/* Static ember background that the white blocks scroll over */}
+      <div aria-hidden className="fixed inset-0 -z-10 bg-ember-scene" />
       <Nav />
       <Hero />
-      <Program />
-      <Price />
+      <div className="px-3 sm:px-5 lg:px-6 space-y-4 sm:space-y-6">
+        <Program />
+        <Price />
+      </div>
       <Contacts />
     </main>
   );
 }
+
