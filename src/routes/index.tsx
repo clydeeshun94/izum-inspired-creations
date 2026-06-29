@@ -59,7 +59,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative min-h-screen w-full overflow-hidden bg-ember-scene">
+    <section id="top" className="relative min-h-screen w-full overflow-hidden">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-overlay"
         style={{
