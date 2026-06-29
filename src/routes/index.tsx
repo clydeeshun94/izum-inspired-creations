@@ -214,9 +214,12 @@ const tiers = [
 
 function Price() {
   return (
-    <section id="price" className="relative w-full bg-background text-foreground">
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
-        <div className="border-border px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
+    <section
+      id="price"
+      className="relative w-full bg-foreground text-primary-foreground rounded-3xl overflow-hidden shadow-2xl"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
             Pick
             <br />
@@ -224,24 +227,24 @@ function Price() {
           </h2>
         </div>
         <div className="px-6 py-20 sm:px-10 md:py-28 lg:px-16">
-          <p className="max-w-md font-mono text-[13px] uppercase leading-relaxed tracking-[0.18em] text-foreground/85">
+          <p className="max-w-md font-mono text-[13px] uppercase leading-relaxed tracking-[0.18em] text-primary-foreground/75">
             / Three ways in. Start free, level up when the work demands it. Cancel any time.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 border-t border-border md:grid-cols-3">
+      <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-3">
         {tiers.map((t, i) => (
           <div
             key={t.name}
-            className={`px-6 py-16 sm:px-10 lg:px-12 ${i < tiers.length - 1 ? "border-b border-border md:border-b-0 md:border-r" : ""}`}
+            className={`px-6 py-16 sm:px-10 lg:px-12 ${i < tiers.length - 1 ? "border-b border-primary-foreground/10 md:border-b-0 md:border-r" : ""}`}
           >
             <p className="font-mono text-[13px] tracking-[0.22em] text-ember">0{i + 1}.</p>
             <h3 className="text-display mt-8 text-[clamp(2rem,3.5vw,2.75rem)]">{t.name}</h3>
-            <p className="text-display mt-2 text-[clamp(2.25rem,4vw,3rem)] text-foreground">
+            <p className="text-display mt-2 text-[clamp(2.25rem,4vw,3rem)]">
               {t.price}
             </p>
-            <ul className="mt-8 space-y-3 font-mono text-[12.5px] uppercase tracking-[0.14em] text-foreground/80">
+            <ul className="mt-8 space-y-3 font-mono text-[12.5px] uppercase tracking-[0.14em] text-primary-foreground/75">
               {t.features.map((f) => (
                 <li key={f} className="flex items-center gap-3">
                   <span className="inline-block h-1.5 w-1.5 rounded-full bg-ember" />
@@ -249,7 +252,7 @@ function Price() {
                 </li>
               ))}
             </ul>
-            <button className="group mt-10 inline-flex items-center gap-3 rounded-lg bg-foreground px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-primary-foreground transition-transform hover:-translate-y-0.5">
+            <button className="group mt-10 inline-flex items-center gap-3 rounded-lg bg-background px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-foreground transition-transform hover:-translate-y-0.5">
               ENROLL
               <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
@@ -259,6 +262,7 @@ function Price() {
     </section>
   );
 }
+
 
 function Contacts() {
   return (
