@@ -1,11 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Menu, MoreHorizontal, ArrowUpRight } from "lucide-react";
+import {
+  Menu,
+  MoreHorizontal,
+  ArrowUpRight,
+  ArrowLeft,
+  ArrowRight,
+  Trophy,
+  Flame,
+  ShieldCheck,
+} from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "BAKDOR — Learn to code" },
-      { name: "description", content: "Learn to build websites of any complexity on Taptop — from zero to pro." },
+      { title: "BAKDOR — Live auctions, real bids" },
+      {
+        name: "description",
+        content:
+          "Bakdor is the auction platform for hot drops, reverse auctions and buy-now deals. Bid live, watch winners, climb the TMB leaderboard.",
+      },
     ],
   }),
   component: Index,
@@ -49,7 +63,10 @@ function Nav() {
             </li>
           ))}
         </ul>
-        <button className="grid h-9 w-9 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-secondary md:ml-2" aria-label="Menu">
+        <button
+          className="grid h-9 w-9 place-items-center rounded-md border border-border text-foreground transition-colors hover:bg-secondary md:ml-2"
+          aria-label="Menu"
+        >
           <Menu size={16} />
         </button>
       </nav>
@@ -70,24 +87,27 @@ function Hero() {
       <div className="relative z-10 flex min-h-screen flex-col justify-end px-6 pb-10 pt-40 sm:px-10 sm:pb-14 lg:px-16">
         <div className="grid grid-cols-1 items-end gap-12 lg:grid-cols-12">
           <h1 className="text-display col-span-1 text-[clamp(2.75rem,9vw,9.5rem)] text-foreground lg:col-span-8">
-            Learn
+            Bid live.
             <br />
-            to code with
+            Win real.
             <br />
             bakdor
           </h1>
 
           <div className="col-span-1 flex flex-col items-stretch gap-6 lg:col-span-4 lg:items-end">
             <p className="max-w-xs font-mono text-[13px] uppercase leading-relaxed tracking-[0.16em] text-foreground/85 lg:text-right">
-              Learn to build websites
+              The auction platform
               <br />
-              of any complexity on
+              for hot drops, reverse
               <br />
-              taptop — from zero to pro
+              auctions &amp; buy-now deals
             </p>
 
             <div className="flex items-center gap-2">
-              <a href="#program" className="group inline-flex items-center justify-between gap-6 rounded-lg bg-foreground px-5 py-3.5 font-mono text-[13px] tracking-[0.18em] text-primary-foreground transition-transform hover:-translate-y-0.5">
+              <a
+                href="#program"
+                className="group inline-flex items-center justify-between gap-6 rounded-lg bg-foreground px-5 py-3.5 font-mono text-[13px] tracking-[0.18em] text-primary-foreground transition-transform hover:-translate-y-0.5"
+              >
                 PUSH ME UP
                 <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
@@ -104,7 +124,12 @@ function Hero() {
         <div className="mt-14 flex items-center justify-between font-mono text-[12px] uppercase tracking-[0.22em] text-foreground/70">
           <span className="rounded-md border border-border/60 px-3 py-1.5">[ scroll ]</span>
           <div className="flex items-center gap-6">
-            <a href="https://t.me/bakdor" target="_blank" rel="noreferrer" className="transition-colors hover:text-foreground">
+            <a
+              href="https://t.me/bakdor"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors hover:text-foreground"
+            >
               Telegram
             </a>
             <a href="#contacts" className="transition-colors hover:text-foreground">
@@ -117,21 +142,142 @@ function Hero() {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/*                           PROGRAM SECTION                          */
+/* ------------------------------------------------------------------ */
+
+type LivePreview = {
+  kind: "live" | "winner" | "leader" | "tmb";
+  tag: string;
+  title: string;
+  meta: string;
+  detail: string;
+};
+
+const livePreviews: LivePreview[] = [
+  {
+    kind: "live",
+    tag: "LIVE NOW",
+    title: "Vintage Rolex Submariner 1968",
+    meta: "Current bid · $14,250",
+    detail: "23 bidders · ends in 04:12:08",
+  },
+  {
+    kind: "leader",
+    tag: "LEADER",
+    title: "Hermès Birkin 30 — Étoupe",
+    meta: "Top bidder · @anya.k",
+    detail: "Held lead for 1h 42m",
+  },
+  {
+    kind: "winner",
+    tag: "WINNER",
+    title: "Banksy — Girl with Balloon (Print)",
+    meta: "Sold · $48,900",
+    detail: "Won by @midnight.collector",
+  },
+  {
+    kind: "tmb",
+    tag: "TOP TMB",
+    title: "@hugo.delacroix",
+    meta: "Trust me bros · 2,418",
+    detail: "147 successful deals · 0 disputes",
+  },
+  {
+    kind: "live",
+    tag: "LIVE NOW",
+    title: "1992 McLaren F1 Service Book",
+    meta: "Current bid · $3,800",
+    detail: "11 bidders · ends in 00:47:31",
+  },
+];
+
+function LiveAuctionCarousel() {
+  const [index, setIndex] = useState(0);
+  const total = livePreviews.length;
+  const item = livePreviews[index];
+
+  const go = (dir: number) => setIndex((i) => (i + dir + total) % total);
+
+  const accent =
+    item.kind === "winner"
+      ? "text-ember"
+      : item.kind === "leader"
+        ? "text-primary-foreground"
+        : item.kind === "tmb"
+          ? "text-ember"
+          : "text-ember";
+
+  return (
+    <div className="mt-10 w-full max-w-md">
+      <button
+        type="button"
+        className="group block w-full rounded-2xl border border-primary-foreground/15 bg-primary-foreground/[0.03] p-6 text-left transition-colors hover:bg-primary-foreground/[0.06]"
+      >
+        <div className="flex items-center justify-between font-mono text-[11px] tracking-[0.22em]">
+          <span className={`inline-flex items-center gap-2 ${accent}`}>
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-current" />
+            {item.tag}
+          </span>
+          <span className="text-primary-foreground/55">
+            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          </span>
+        </div>
+
+        <h4 className="text-display mt-6 text-[clamp(1.25rem,2vw,1.6rem)] leading-tight">
+          {item.title}
+        </h4>
+        <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.18em] text-primary-foreground/80">
+          {item.meta}
+        </p>
+        <p className="mt-1.5 font-mono text-[11.5px] uppercase tracking-[0.18em] text-primary-foreground/55">
+          {item.detail}
+        </p>
+      </button>
+
+      <div className="mt-5 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => go(-1)}
+          aria-label="Previous preview"
+          className="grid h-10 w-10 place-items-center rounded-lg border border-primary-foreground/15 text-primary-foreground transition-colors hover:bg-primary-foreground/[0.06]"
+        >
+          <ArrowLeft size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={() => go(1)}
+          aria-label="Next preview"
+          className="grid h-10 w-10 place-items-center rounded-lg border border-primary-foreground/15 text-primary-foreground transition-colors hover:bg-primary-foreground/[0.06]"
+        >
+          <ArrowRight size={14} />
+        </button>
+        <span className="ml-2 font-mono text-[11px] uppercase tracking-[0.22em] text-primary-foreground/55">
+          swipe previews
+        </span>
+      </div>
+    </div>
+  );
+}
+
 const reasons = [
   {
     num: "01.",
-    title: "/ A HOME-GROWN PRODUCT.",
-    body: "Taptop is our home-grown tool that now almost matches Webflow and is purpose-built for our realities.",
+    title: "/ MARKETPLACE.",
+    body: "Browse thousands of listings across every category — from rare watches to studio gear — all in one curated marketplace.",
+    icon: ShieldCheck,
   },
   {
     num: "02.",
-    title: "/ SIMPLE PAYMENTS.",
-    body: "Accepts every payment method—no headaches over transfers or currency conversion.",
+    title: "/ ENDING SOON.",
+    body: "Track auctions in their final stretch. Last-minute bids, sniper protection, and instant push when something you watch is closing.",
+    icon: Flame,
   },
   {
     num: "03.",
-    title: "/ SERVERS NEARBY.",
-    body: "Everything is fully compliant with the law—no legal headaches. Plus, sites load faster because the server isn't light-years away.",
+    title: "/ SECURE BIDDING.",
+    body: "Verified sellers, escrowed payments and dispute resolution baked in. Every bid is binding — every win is honored.",
+    icon: Trophy,
   },
 ];
 
@@ -139,109 +285,133 @@ function Program() {
   return (
     <section
       id="program"
-      className="relative w-full bg-foreground text-primary-foreground rounded-3xl overflow-hidden shadow-2xl"
+      className="relative w-full rounded-3xl border border-primary-foreground/10 bg-foreground/95 text-primary-foreground overflow-hidden shadow-2xl backdrop-blur"
     >
-      {/* Top split: title + [JOIN US] */}
+      {/* Top split */}
       <div className="grid grid-cols-1 md:grid-cols-2">
         <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
-            Why do we
+            Why bid
             <br />
-            choose taptop?
+            on bakdor?
           </h2>
         </div>
         <div className="relative px-6 py-20 sm:px-10 md:py-28 lg:px-16">
-          <span className="font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/75">
-            [ join us ]
-          </span>
+          <a
+            href="#price"
+            className="group inline-flex items-center gap-3 font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/80 transition-colors hover:text-primary-foreground"
+          >
+            [ create auction ]
+            <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </a>
           <span className="absolute right-6 top-24 inline-block h-1.5 w-1.5 rounded-full bg-ember sm:right-10 lg:right-16" />
         </div>
       </div>
 
-      {/* Bottom split: caption + 3 reasons */}
+      {/* Bottom split: LIVE AUCTION carousel + 3 reasons */}
       <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-2">
         <div className="border-primary-foreground/10 px-6 py-16 sm:px-10 md:border-r md:py-24 lg:px-16">
           <p className="font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/75">
-            / Keeping up with
-            <br />
-            the times
+            / Live auction
           </p>
-          {/* dotted decorative figure */}
-          <div className="mt-16 grid h-72 w-full max-w-sm grid-cols-6 grid-rows-8 gap-3 opacity-90">
-            {[
-              [0,2],[1,1],[2,2],[3,0],[1,3],[3,3],[0,4],[2,4],[4,4],[2,5],[3,6],[2,7],[3,7],
-            ].map(([c, r], i) => (
-              <span
-                key={i}
-                className="h-2.5 w-2.5 rounded-full bg-ember"
-                style={{ gridColumnStart: c + 1, gridRowStart: r + 1 }}
-              />
-            ))}
-          </div>
+          <p className="mt-3 max-w-sm font-mono text-[11.5px] uppercase tracking-[0.18em] text-primary-foreground/55">
+            Swipe through what's on the block — winners just called, leaders holding the top bid, and the users carrying the most TMBs (trust me bros).
+          </p>
+          <LiveAuctionCarousel />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2">
-          {reasons.map((r, i) => (
-            <div
-              key={r.num}
-              className={`px-6 py-12 sm:px-10 sm:py-16 lg:px-12 ${
-                i === 0 ? "border-primary-foreground/10 sm:border-r" : ""
-              } ${i > 0 ? "border-t border-primary-foreground/10 sm:border-t-0" : ""} ${
-                i === 2 ? "sm:col-span-2 sm:border-t" : ""
-              }`}
-            >
-              <p className="font-mono text-[13px] tracking-[0.22em] text-ember">{r.num}</p>
-              <h3 className="text-display mt-8 text-[clamp(1.4rem,2.2vw,1.9rem)] leading-tight">
-                {r.title}
-              </h3>
-              <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-primary-foreground/70">
-                {r.body}
-              </p>
-            </div>
-          ))}
+          {reasons.map((r, i) => {
+            const Icon = r.icon;
+            return (
+              <button
+                type="button"
+                key={r.num}
+                className={`group text-left px-6 py-12 sm:px-10 sm:py-16 lg:px-12 transition-colors hover:bg-primary-foreground/[0.04] ${
+                  i === 0 ? "border-primary-foreground/10 sm:border-r" : ""
+                } ${i > 0 ? "border-t border-primary-foreground/10 sm:border-t-0" : ""} ${
+                  i === 2 ? "sm:col-span-2 sm:border-t" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[13px] tracking-[0.22em] text-ember">{r.num}</p>
+                  <Icon size={16} className="text-primary-foreground/40 transition-colors group-hover:text-ember" />
+                </div>
+                <h3 className="text-display mt-8 text-[clamp(1.4rem,2.2vw,1.9rem)] leading-tight">
+                  {r.title}
+                </h3>
+                <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-primary-foreground/70">
+                  {r.body}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
+/* ------------------------------------------------------------------ */
+/*                            PRICE SECTION                           */
+/* ------------------------------------------------------------------ */
 
 const tiers = [
-  { name: "BASIC", price: "$0", features: ["Intro lessons", "Community access", "Self-paced"] },
-  { name: "PRO", price: "$149", features: ["Full curriculum", "Live workshops", "Project reviews"] },
-  { name: "STUDIO", price: "$390", features: ["1:1 mentorship", "Portfolio launch", "Job referrals"] },
+  {
+    name: "QUICK ACTIONS",
+    price: "Jump in",
+    features: ["Hot auctions", "Buy now available", "Reverse auctions"],
+    cta: "EXPLORE",
+  },
+  {
+    name: "MY ITEMS",
+    price: "Your listings",
+    features: ["Active auctions", "Drafts & scheduled", "Sold history"],
+    cta: "OPEN",
+  },
+  {
+    name: "WATCHLIST",
+    price: "Tracked",
+    features: ["Saved lots", "Ending-soon alerts", "Outbid notifications"],
+    cta: "VIEW",
+  },
 ];
 
 function Price() {
   return (
     <section
       id="price"
-      className="relative w-full bg-foreground text-primary-foreground rounded-3xl overflow-hidden shadow-2xl"
+      className="relative w-full rounded-3xl border border-primary-foreground/10 bg-foreground/95 text-primary-foreground overflow-hidden shadow-2xl backdrop-blur"
     >
       <div className="grid grid-cols-1 md:grid-cols-2">
         <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
             Pick
             <br />
-            your tier.
+            your move.
           </h2>
         </div>
         <div className="px-6 py-20 sm:px-10 md:py-28 lg:px-16">
           <p className="max-w-md font-mono text-[13px] uppercase leading-relaxed tracking-[0.18em] text-primary-foreground/75">
-            / Three ways in. Start free, level up when the work demands it. Cancel any time.
+            / Three doors into the auction floor. Bid fast, manage what you've listed, or stalk the lots you want.
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-3">
         {tiers.map((t, i) => (
-          <div
+          <button
+            type="button"
             key={t.name}
-            className={`px-6 py-16 sm:px-10 lg:px-12 ${i < tiers.length - 1 ? "border-b border-primary-foreground/10 md:border-b-0 md:border-r" : ""}`}
+            className={`group text-left px-6 py-16 sm:px-10 lg:px-12 transition-colors hover:bg-primary-foreground/[0.04] ${
+              i < tiers.length - 1
+                ? "border-b border-primary-foreground/10 md:border-b-0 md:border-r"
+                : ""
+            }`}
           >
             <p className="font-mono text-[13px] tracking-[0.22em] text-ember">0{i + 1}.</p>
             <h3 className="text-display mt-8 text-[clamp(2rem,3.5vw,2.75rem)]">{t.name}</h3>
-            <p className="text-display mt-2 text-[clamp(2.25rem,4vw,3rem)]">
+            <p className="text-display mt-2 text-[clamp(1.25rem,2vw,1.75rem)] text-primary-foreground/60">
               {t.price}
             </p>
             <ul className="mt-8 space-y-3 font-mono text-[12.5px] uppercase tracking-[0.14em] text-primary-foreground/75">
@@ -252,17 +422,20 @@ function Price() {
                 </li>
               ))}
             </ul>
-            <button className="group mt-10 inline-flex items-center gap-3 rounded-lg bg-background px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-foreground transition-transform hover:-translate-y-0.5">
-              ENROLL
+            <span className="mt-10 inline-flex items-center gap-3 rounded-lg bg-background px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-foreground transition-transform group-hover:-translate-y-0.5">
+              {t.cta}
               <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </button>
-          </div>
+            </span>
+          </button>
         ))}
       </div>
     </section>
   );
 }
 
+/* ------------------------------------------------------------------ */
+/*                          CONTACTS SECTION                          */
+/* ------------------------------------------------------------------ */
 
 function Contacts() {
   return (
@@ -282,19 +455,30 @@ function Contacts() {
             </p>
             <ul className="mt-10 space-y-5 font-mono text-[14px] uppercase tracking-[0.18em]">
               <li>
-                <a href="mailto:hi@bakdor.studio" className="group flex items-center justify-between border-b border-border/60 pb-4 transition-colors hover:text-foreground">
+                <a
+                  href="mailto:hi@bakdor.studio"
+                  className="group flex items-center justify-between border-b border-border/60 pb-4 transition-colors hover:text-foreground"
+                >
                   hi@bakdor.studio
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               </li>
               <li>
-                <a href="https://t.me/bakdor" target="_blank" rel="noreferrer" className="group flex items-center justify-between border-b border-border/60 pb-4 transition-colors hover:text-foreground">
+                <a
+                  href="https://t.me/bakdor"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-center justify-between border-b border-border/60 pb-4 transition-colors hover:text-foreground"
+                >
                   Telegram — t.me/bakdor
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               </li>
               <li>
-                <a href="#" className="group flex items-center justify-between border-b border-border/60 pb-4 transition-colors hover:text-foreground">
+                <a
+                  href="#"
+                  className="group flex items-center justify-between border-b border-border/60 pb-4 transition-colors hover:text-foreground"
+                >
                   D—Profile
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
@@ -320,7 +504,7 @@ function Contacts() {
 function Index() {
   return (
     <main className="relative w-full text-foreground">
-      {/* Static ember background that the white blocks scroll over */}
+      {/* Static ember background that the blocks scroll over */}
       <div aria-hidden className="fixed inset-0 -z-10 bg-ember-scene" />
       <Nav />
       <Hero />
@@ -332,4 +516,3 @@ function Index() {
     </main>
   );
 }
-
