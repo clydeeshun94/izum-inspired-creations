@@ -267,7 +267,7 @@ function Price() {
 function Contacts() {
   return (
     <section id="contacts" className="relative w-full overflow-hidden">
-      <div className="bg-ember-scene">
+      <div>
         <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
           <div className="border-border px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
             <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
