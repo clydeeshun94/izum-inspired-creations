@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Menu,
   MoreHorizontal,
@@ -8,8 +8,14 @@ import {
   Trophy,
   Flame,
   ShieldCheck,
+  Gavel,
+  Bookmark,
+  PackageOpen,
+  Plus,
 } from "lucide-react";
 import { useState } from "react";
+import { lots, type Lot } from "@/lib/auction-data";
+import { CreateAuctionModal, LotModal, MyItemsModal } from "@/components/auction/modals";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,7 +80,7 @@ function Nav() {
   );
 }
 
-function Hero() {
+function Hero({ onCreate }: { onCreate: () => void }) {
   return (
     <section id="top" className="relative min-h-screen w-full overflow-hidden">
       <div
@@ -112,7 +118,8 @@ function Hero() {
                 <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
               <button
-                aria-label="More"
+                onClick={onCreate}
+                aria-label="Create auction"
                 className="grid h-12 w-12 place-items-center rounded-lg bg-foreground text-primary-foreground transition-transform hover:-translate-y-0.5"
               >
                 <MoreHorizontal size={18} />
@@ -143,122 +150,93 @@ function Hero() {
 }
 
 /* ------------------------------------------------------------------ */
-/*                           PROGRAM SECTION                          */
+/*                       LIVE AUCTION (full tile)                     */
 /* ------------------------------------------------------------------ */
 
-type LivePreview = {
-  kind: "live" | "winner" | "leader" | "tmb";
-  tag: string;
-  title: string;
-  meta: string;
-  detail: string;
-};
-
-const livePreviews: LivePreview[] = [
-  {
-    kind: "live",
-    tag: "LIVE NOW",
-    title: "Vintage Rolex Submariner 1968",
-    meta: "Current bid · $14,250",
-    detail: "23 bidders · ends in 04:12:08",
-  },
-  {
-    kind: "leader",
-    tag: "LEADER",
-    title: "Hermès Birkin 30 — Étoupe",
-    meta: "Top bidder · @anya.k",
-    detail: "Held lead for 1h 42m",
-  },
-  {
-    kind: "winner",
-    tag: "WINNER",
-    title: "Banksy — Girl with Balloon (Print)",
-    meta: "Sold · $48,900",
-    detail: "Won by @midnight.collector",
-  },
-  {
-    kind: "tmb",
-    tag: "TOP TMB",
-    title: "@hugo.delacroix",
-    meta: "Trust me bros · 2,418",
-    detail: "147 successful deals · 0 disputes",
-  },
-  {
-    kind: "live",
-    tag: "LIVE NOW",
-    title: "1992 McLaren F1 Service Book",
-    meta: "Current bid · $3,800",
-    detail: "11 bidders · ends in 00:47:31",
-  },
-];
-
-function LiveAuctionCarousel() {
+function LiveAuctionTile({ onOpen }: { onOpen: (l: Lot) => void }) {
   const [index, setIndex] = useState(0);
-  const total = livePreviews.length;
-  const item = livePreviews[index];
+  const total = lots.length;
+  const lot = lots[index];
 
   const go = (dir: number) => setIndex((i) => (i + dir + total) % total);
 
-  const accent =
-    item.kind === "winner"
-      ? "text-ember"
-      : item.kind === "leader"
-        ? "text-primary-foreground"
-        : item.kind === "tmb"
-          ? "text-ember"
-          : "text-ember";
-
   return (
-    <div className="mt-10 w-full max-w-md">
-      <button
-        type="button"
-        className="group block w-full rounded-2xl border border-primary-foreground/15 bg-primary-foreground/[0.03] p-6 text-left transition-colors hover:bg-primary-foreground/[0.06]"
-      >
-        <div className="flex items-center justify-between font-mono text-[11px] tracking-[0.22em]">
-          <span className={`inline-flex items-center gap-2 ${accent}`}>
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-current" />
-            {item.tag}
+    <div className="relative h-full min-h-[460px] w-full overflow-hidden">
+      {/* Full-bleed photo */}
+      <img
+        src={lot.image}
+        alt={lot.title}
+        className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-background/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent" />
+
+      {/* Top row: tag + counter */}
+      <div className="relative flex items-center justify-between p-6 sm:p-8 font-mono text-[11px] uppercase tracking-[0.22em]">
+        <span className="inline-flex items-center gap-2 rounded-full bg-background/70 px-3 py-1.5 text-ember backdrop-blur">
+          <span className="relative inline-flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-60" />
+            <span className="relative inline-flex h-full w-full rounded-full bg-current" />
           </span>
-          <span className="text-primary-foreground/55">
-            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          {lot.tag}
+        </span>
+        <span className="rounded-full bg-background/70 px-3 py-1.5 text-foreground/80 backdrop-blur">
+          {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+        </span>
+      </div>
+
+      {/* Bottom content */}
+      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ember">
+          / {lot.category}
+        </p>
+        <h4 className="text-display mt-3 text-[clamp(1.6rem,3vw,2.4rem)] leading-tight text-foreground">
+          {lot.title}
+        </h4>
+        <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.18em] text-foreground/85">
+          {lot.meta}
+        </p>
+        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-foreground/60">
+          {lot.detail}
+        </p>
+
+        <div className="mt-6 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onOpen(lot)}
+            className="group inline-flex items-center gap-3 rounded-lg bg-foreground px-4 py-2.5 font-mono text-[12px] tracking-[0.18em] text-primary-foreground transition-transform hover:-translate-y-0.5"
+          >
+            VIEW LOT
+            <ArrowUpRight size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label="Previous"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-border/60 bg-background/50 text-foreground backdrop-blur transition-colors hover:text-ember"
+          >
+            <ArrowLeft size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label="Next"
+            className="grid h-10 w-10 place-items-center rounded-lg border border-border/60 bg-background/50 text-foreground backdrop-blur transition-colors hover:text-ember"
+          >
+            <ArrowRight size={14} />
+          </button>
+          <span className="ml-1 font-mono text-[10.5px] uppercase tracking-[0.22em] text-foreground/55">
+            swipe previews
           </span>
         </div>
-
-        <h4 className="text-display mt-6 text-[clamp(1.25rem,2vw,1.6rem)] leading-tight">
-          {item.title}
-        </h4>
-        <p className="mt-4 font-mono text-[12px] uppercase tracking-[0.18em] text-primary-foreground/80">
-          {item.meta}
-        </p>
-        <p className="mt-1.5 font-mono text-[11.5px] uppercase tracking-[0.18em] text-primary-foreground/55">
-          {item.detail}
-        </p>
-      </button>
-
-      <div className="mt-5 flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => go(-1)}
-          aria-label="Previous preview"
-          className="grid h-10 w-10 place-items-center rounded-lg border border-primary-foreground/15 text-primary-foreground transition-colors hover:bg-primary-foreground/[0.06]"
-        >
-          <ArrowLeft size={14} />
-        </button>
-        <button
-          type="button"
-          onClick={() => go(1)}
-          aria-label="Next preview"
-          className="grid h-10 w-10 place-items-center rounded-lg border border-primary-foreground/15 text-primary-foreground transition-colors hover:bg-primary-foreground/[0.06]"
-        >
-          <ArrowRight size={14} />
-        </button>
-        <span className="ml-2 font-mono text-[11px] uppercase tracking-[0.22em] text-primary-foreground/55">
-          swipe previews
-        </span>
       </div>
     </div>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/*                           PROGRAM SECTION                          */
+/* ------------------------------------------------------------------ */
 
 const reasons = [
   {
@@ -266,30 +244,38 @@ const reasons = [
     title: "/ MARKETPLACE.",
     body: "Browse thousands of listings across every category — from rare watches to studio gear — all in one curated marketplace.",
     icon: ShieldCheck,
+    to: "/marketplace" as const,
   },
   {
     num: "02.",
     title: "/ ENDING SOON.",
     body: "Track auctions in their final stretch. Last-minute bids, sniper protection, and instant push when something you watch is closing.",
     icon: Flame,
+    to: "/ending-soon" as const,
   },
   {
     num: "03.",
     title: "/ SECURE BIDDING.",
     body: "Verified sellers, escrowed payments and dispute resolution baked in. Every bid is binding — every win is honored.",
     icon: Trophy,
+    to: null,
   },
 ];
 
-function Program() {
+function Program({
+  onCreate,
+  onOpenLot,
+}: {
+  onCreate: () => void;
+  onOpenLot: (l: Lot) => void;
+}) {
   return (
     <section
       id="program"
-      className="relative w-full rounded-3xl border border-primary-foreground/10 bg-foreground/95 text-primary-foreground overflow-hidden shadow-2xl backdrop-blur"
+      className="relative w-full rounded-3xl border border-border/40 overflow-hidden"
     >
-      {/* Top split */}
       <div className="grid grid-cols-1 md:grid-cols-2">
-        <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
+        <div className="border-border/40 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
             Why bid
             <br />
@@ -297,53 +283,54 @@ function Program() {
           </h2>
         </div>
         <div className="relative px-6 py-20 sm:px-10 md:py-28 lg:px-16">
-          <a
-            href="#price"
-            className="group inline-flex items-center gap-3 font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/80 transition-colors hover:text-primary-foreground"
+          <button
+            type="button"
+            onClick={onCreate}
+            className="group inline-flex items-center gap-3 font-mono text-[13px] uppercase tracking-[0.22em] text-foreground/80 transition-colors hover:text-foreground"
           >
             [ create auction ]
             <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          </button>
           <span className="absolute right-6 top-24 inline-block h-1.5 w-1.5 rounded-full bg-ember sm:right-10 lg:right-16" />
         </div>
       </div>
 
-      {/* Bottom split: LIVE AUCTION carousel + 3 reasons */}
-      <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-2">
-        <div className="border-primary-foreground/10 px-6 py-16 sm:px-10 md:border-r md:py-24 lg:px-16">
-          <p className="font-mono text-[13px] uppercase tracking-[0.22em] text-primary-foreground/75">
-            / Live auction
-          </p>
-          <p className="mt-3 max-w-sm font-mono text-[11.5px] uppercase tracking-[0.18em] text-primary-foreground/55">
-            Swipe through what's on the block — winners just called, leaders holding the top bid, and the users carrying the most TMBs (trust me bros).
-          </p>
-          <LiveAuctionCarousel />
+      {/* Bottom split: live auction photo tile + 3 reasons */}
+      <div className="grid grid-cols-1 border-t border-border/40 md:grid-cols-2">
+        <div className="relative border-border/40 md:border-r min-h-[460px]">
+          <LiveAuctionTile onOpen={onOpenLot} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2">
           {reasons.map((r, i) => {
             const Icon = r.icon;
-            return (
-              <button
-                type="button"
-                key={r.num}
-                className={`group text-left px-6 py-12 sm:px-10 sm:py-16 lg:px-12 transition-colors hover:bg-primary-foreground/[0.04] ${
-                  i === 0 ? "border-primary-foreground/10 sm:border-r" : ""
-                } ${i > 0 ? "border-t border-primary-foreground/10 sm:border-t-0" : ""} ${
-                  i === 2 ? "sm:col-span-2 sm:border-t" : ""
-                }`}
-              >
+            const cls = `group text-left px-6 py-12 sm:px-10 sm:py-16 lg:px-12 transition-colors hover:bg-foreground/[0.04] ${
+              i === 0 ? "border-border/40 sm:border-r" : ""
+            } ${i > 0 ? "border-t border-border/40 sm:border-t-0" : ""} ${
+              i === 2 ? "sm:col-span-2 sm:border-t" : ""
+            }`;
+            const content = (
+              <>
                 <div className="flex items-center justify-between">
                   <p className="font-mono text-[13px] tracking-[0.22em] text-ember">{r.num}</p>
-                  <Icon size={16} className="text-primary-foreground/40 transition-colors group-hover:text-ember" />
+                  <Icon size={16} className="text-foreground/40 transition-colors group-hover:text-ember" />
                 </div>
                 <h3 className="text-display mt-8 text-[clamp(1.4rem,2.2vw,1.9rem)] leading-tight">
                   {r.title}
                 </h3>
-                <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-primary-foreground/70">
+                <p className="mt-6 max-w-sm font-mono text-[12.5px] uppercase leading-relaxed tracking-[0.14em] text-foreground/70">
                   {r.body}
                 </p>
-              </button>
+              </>
+            );
+            return r.to ? (
+              <Link key={r.num} to={r.to} className={cls}>
+                {content}
+              </Link>
+            ) : (
+              <div key={r.num} className={cls.replace("hover:bg-foreground/[0.04]", "")}>
+                {content}
+              </div>
             );
           })}
         </div>
@@ -356,35 +343,51 @@ function Program() {
 /*                            PRICE SECTION                           */
 /* ------------------------------------------------------------------ */
 
-const tiers = [
+type Tier = {
+  name: string;
+  price: string;
+  features: string[];
+  cta: string;
+  icon: typeof Gavel;
+  to?: "/auctions" | "/watchlist";
+  modal?: "my-items";
+};
+
+const tiers: Tier[] = [
   {
     name: "QUICK ACTIONS",
     price: "Jump in",
     features: ["Hot auctions", "Buy now available", "Reverse auctions"],
     cta: "EXPLORE",
+    icon: Gavel,
+    to: "/auctions",
   },
   {
     name: "MY ITEMS",
     price: "Your listings",
     features: ["Active auctions", "Drafts & scheduled", "Sold history"],
     cta: "OPEN",
+    icon: PackageOpen,
+    modal: "my-items",
   },
   {
     name: "WATCHLIST",
     price: "Tracked",
     features: ["Saved lots", "Ending-soon alerts", "Outbid notifications"],
     cta: "VIEW",
+    icon: Bookmark,
+    to: "/watchlist",
   },
 ];
 
-function Price() {
+function Price({ onOpenMyItems }: { onOpenMyItems: () => void }) {
   return (
     <section
       id="price"
-      className="relative w-full rounded-3xl border border-primary-foreground/10 bg-foreground/95 text-primary-foreground overflow-hidden shadow-2xl backdrop-blur"
+      className="relative w-full rounded-3xl border border-border/40 overflow-hidden"
     >
       <div className="grid grid-cols-1 md:grid-cols-2">
-        <div className="border-primary-foreground/10 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
+        <div className="border-border/40 px-6 py-20 sm:px-10 md:border-r md:py-28 lg:px-16">
           <h2 className="text-display text-[clamp(2.5rem,6.5vw,5.5rem)]">
             Pick
             <br />
@@ -392,42 +395,54 @@ function Price() {
           </h2>
         </div>
         <div className="px-6 py-20 sm:px-10 md:py-28 lg:px-16">
-          <p className="max-w-md font-mono text-[13px] uppercase leading-relaxed tracking-[0.18em] text-primary-foreground/75">
+          <p className="max-w-md font-mono text-[13px] uppercase leading-relaxed tracking-[0.18em] text-foreground/75">
             / Three doors into the auction floor. Bid fast, manage what you've listed, or stalk the lots you want.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 border-t border-primary-foreground/10 md:grid-cols-3">
-        {tiers.map((t, i) => (
-          <button
-            type="button"
-            key={t.name}
-            className={`group text-left px-6 py-16 sm:px-10 lg:px-12 transition-colors hover:bg-primary-foreground/[0.04] ${
-              i < tiers.length - 1
-                ? "border-b border-primary-foreground/10 md:border-b-0 md:border-r"
-                : ""
-            }`}
-          >
-            <p className="font-mono text-[13px] tracking-[0.22em] text-ember">0{i + 1}.</p>
-            <h3 className="text-display mt-8 text-[clamp(2rem,3.5vw,2.75rem)]">{t.name}</h3>
-            <p className="text-display mt-2 text-[clamp(1.25rem,2vw,1.75rem)] text-primary-foreground/60">
-              {t.price}
-            </p>
-            <ul className="mt-8 space-y-3 font-mono text-[12.5px] uppercase tracking-[0.14em] text-primary-foreground/75">
-              {t.features.map((f) => (
-                <li key={f} className="flex items-center gap-3">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-ember" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <span className="mt-10 inline-flex items-center gap-3 rounded-lg bg-background px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-foreground transition-transform group-hover:-translate-y-0.5">
-              {t.cta}
-              <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </span>
-          </button>
-        ))}
+      <div className="grid grid-cols-1 border-t border-border/40 md:grid-cols-3">
+        {tiers.map((t, i) => {
+          const Icon = t.icon;
+          const cls = `group text-left px-6 py-16 sm:px-10 lg:px-12 transition-colors hover:bg-foreground/[0.04] ${
+            i < tiers.length - 1
+              ? "border-b border-border/40 md:border-b-0 md:border-r"
+              : ""
+          }`;
+          const body = (
+            <>
+              <div className="flex items-center justify-between">
+                <p className="font-mono text-[13px] tracking-[0.22em] text-ember">0{i + 1}.</p>
+                <Icon size={16} className="text-foreground/40 transition-colors group-hover:text-ember" />
+              </div>
+              <h3 className="text-display mt-8 text-[clamp(2rem,3.5vw,2.75rem)]">{t.name}</h3>
+              <p className="text-display mt-2 text-[clamp(1.25rem,2vw,1.75rem)] text-foreground/60">
+                {t.price}
+              </p>
+              <ul className="mt-8 space-y-3 font-mono text-[12.5px] uppercase tracking-[0.14em] text-foreground/75">
+                {t.features.map((f) => (
+                  <li key={f} className="flex items-center gap-3">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-ember" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <span className="mt-10 inline-flex items-center gap-3 rounded-lg bg-foreground px-4 py-3 font-mono text-[12px] tracking-[0.2em] text-primary-foreground transition-transform group-hover:-translate-y-0.5">
+                {t.cta}
+                <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </span>
+            </>
+          );
+          return t.to ? (
+            <Link key={t.name} to={t.to} className={cls}>
+              {body}
+            </Link>
+          ) : (
+            <button key={t.name} type="button" onClick={onOpenMyItems} className={cls}>
+              {body}
+            </button>
+          );
+        })}
       </div>
     </section>
   );
@@ -437,7 +452,7 @@ function Price() {
 /*                          CONTACTS SECTION                          */
 /* ------------------------------------------------------------------ */
 
-function Contacts() {
+function Contacts({ onCreate }: { onCreate: () => void }) {
   return (
     <section id="contacts" className="relative w-full overflow-hidden">
       <div>
@@ -475,13 +490,15 @@ function Contacts() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="group flex items-center justify-between border-b border-border/60 pb-4 transition-colors hover:text-foreground"
+                <button
+                  onClick={onCreate}
+                  className="group flex w-full items-center justify-between border-b border-border/60 pb-4 text-left transition-colors hover:text-foreground"
                 >
-                  D—Profile
+                  <span className="inline-flex items-center gap-2">
+                    <Plus size={14} /> create an auction
+                  </span>
                   <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -502,17 +519,25 @@ function Contacts() {
 }
 
 function Index() {
+  const [createOpen, setCreateOpen] = useState(false);
+  const [myItemsOpen, setMyItemsOpen] = useState(false);
+  const [lot, setLot] = useState<Lot | null>(null);
+
   return (
     <main className="relative w-full text-foreground">
-      {/* Static ember background that the blocks scroll over */}
+      {/* Single ember background — every section scrolls over it */}
       <div aria-hidden className="fixed inset-0 -z-10 bg-ember-scene" />
       <Nav />
-      <Hero />
+      <Hero onCreate={() => setCreateOpen(true)} />
       <div className="px-3 sm:px-5 lg:px-6 space-y-4 sm:space-y-6">
-        <Program />
-        <Price />
+        <Program onCreate={() => setCreateOpen(true)} onOpenLot={setLot} />
+        <Price onOpenMyItems={() => setMyItemsOpen(true)} />
       </div>
-      <Contacts />
+      <Contacts onCreate={() => setCreateOpen(true)} />
+
+      <CreateAuctionModal open={createOpen} onOpenChange={setCreateOpen} />
+      <MyItemsModal open={myItemsOpen} onOpenChange={setMyItemsOpen} />
+      <LotModal lot={lot} open={!!lot} onOpenChange={(v) => !v && setLot(null)} />
     </main>
   );
 }
